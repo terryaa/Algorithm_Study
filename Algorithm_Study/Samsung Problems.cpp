@@ -248,189 +248,191 @@ void num17779() {
 }
 
 
-int board[20][20];
+
 int check[20][20] = {};
 
-void bring() {
-
-}
 //더해지면 다음인덱스시작
 //마지막인덱스 0처리
-void push_up() {
-	for(int i=0;i<N-1;i++)
-		for (int j = 0; j < N; j++)
-		{
-			if (board[i][j] == board[i + 1][j]) {
-				board[i][j] += board[i][j];
 
-				for (int k = i + 1; k < N - 1; k++)
-					board[k][j] = board[k + 1][j];
-				board[N - 1][j] = 0;
-			}
-			if(board[i][j]==0){
-				for (int k = i + 1; k < N - 1; k++)
-					board[k][j] = board[k + 1][j];
-				board[N - 1][j] = 0;
-				//한번더
-				if (board[i][j] == board[i + 1][j]) {
-					board[i][j] += board[i][j];
-
-					for (int k = i + 1; k < N - 1; k++)
-						board[k][j] = board[k + 1][j];
-					board[N - 1][j] = 0;
-				}
-			}
-		}
-}
-void push_down() {
-	for(int i=N-1;i>=1;i--)
-		for (int j = 0; j < N; j++) {
-			if (board[i][j] == board[i - 1][j]) {
-				board[i][j] += board[i][j];
-				for (int k = i - 1; k >= 1; k--)
-					board[k][j] = board[k - 1][j];
-				board[0][j] = 0;
-			}
-			if (board[i][j] == 0) {
-				for (int k = i - 1; k >= 1; k--)
-					board[k][j] = board[k - 1][j];
-				board[0][j] = 0; 
-
-				if (board[i][j] == board[i - 1][j]) {
-					board[i][j] += board[i][j];
-					for (int k = i - 1; k >= 1; k--)
-						board[k][j] = board[k - 1][j];
-					board[0][j] = 0;
-				}
-			}
-		}
-}
-
-
-
-void push_right() {
+void show(int board[][20]) {
 	for (int i = 0; i < N; i++) {
-		for (int j = N - 1; j >= 1; j--) {
-			if (board[i][j] == board[i][j - 1]) {
-				board[i][j] += board[i][j];
-				board[i][j - 1] = 0;
-			}
-		}
-		for (int j = N - 1; j >= 1; j--) {
-			if (board[i][j] == 0) {
-				int zeros = 0;
-				for (int p = j; p >= 1; p--) {
-					if (board[i][p] == 0) {
-						zeros++;
-					}
-					else 
-						break;
-				}
-				for (int k = j; k >= 1; k--) {
-					if (k - zeros == 0)
-						break;
-					board[i][k] = board[i][k - zeros];
-					board[i][k - zeros] = 0;
-
-				}
-				board[i][0] = 0;
-			}
-		}
-	}
-
-}
-
-void push_left_2() {
-	for(int i=0;i<N;i++)
-		for (int j = 0; j < N - 1; j++) {
-			if (board[i][j] == board[i][j + 1]) {
-				board[i][j] += board[i][j];
-				for (int k = j + 1; k < N - 1; k++)
-					board[i][k] = board[i][k + 1];
-				board[i][N - 1] = 0;
-			}
-			if(board[i][j]==0){
-				for (int k = j + 1; k < N - 1; k++)
-					board[i][k] = board[i][k + 1];
-				board[i][N - 1] = 0;
-
-				if (board[i][j] == board[i][j + 1]) {
-					board[i][j] += board[i][j];
-					for (int k = j + 1; k < N - 1; k++)
-						board[i][k] = board[i][k + 1];
-					board[i][N - 1] = 0;
-				}
-			}
-		}
-}
-void push_left() {
-	for (int i = 0; i < N; i++){
-		for (int j = 0; j < N - 1; j++) {
-			if (board[i][j] == board[i][j + 1]) {
-				board[i][j] += board[i][j];
-				board[i][j + 1] = 0;
-			}
-		}
-		for (int j = 0; j < N - 1; j++) {
-			if (board[i][j] == 0) {
-				int zeros = 0;
-				//0개수를샘
-				for (int p = j; p < N-1; p++) {
-					if (board[i][p] == 0)
-						zeros++;
-					else
-						break;
-				}
-				for (int k = j; k < N - 1; k++) {
-					if (k + zeros == 0)
-						break;
-					board[i][k] == board[i][k + zeros];
-					board[i][k + zeros] = 0;
-				}
-				
-			}
-		}
-	}
-}
-void show() {
-	for(int i=0;i<N;i++){
 		for (int j = 0; j < N; j++)
 			printf("%d ", board[i][j]);
 		printf("\n");
 	}
 }
-
-void push_right_n(int reg) {
+int(*push_right(int board[][20]))[20]{
+	int nums;
 	for (int i = 0; i < N; i++) {
-		for (int j = N - 1; j >= 1; j--) {
+		nums = N - 1;
+		for (int j = N - 1; j > -1; j--) {
+			//땡기기
+			
 			if (board[i][j] != 0) {
-				for (int k = j; k < N-1; k++) {
-					if (board[i][k+1] == 0) {
-						board[i][k + 1] = board[i][k];
-					}
-					else {
-						if (board[i][k] == board[i][k + 1] && check[i][k + 1] < reg) {
-							board[i][k + 1] += board[i][k + 1];
-							board[i][k] = 0;
-							check[i][k + 1]++;
+				if (j == 0) {
+					int temp = board[i][j];
+					board[i][j] = 0;
+					board[i][nums] = temp;
+				}
+				else {
+					for (int k = j - 1; k > -1; k--) {
+						if (board[i][k] != 0) {
+							if (board[i][j] == board[i][k]) {
+								board[i][j] = 0;
+								board[i][nums--] = board[i][k] * 2;
+								board[i][k] = 0;
+							}
+							else {
+								int temp = board[i][j];
+								board[i][j] = 0;
+								board[i][nums--] = temp;
+							}
+							j = k+1;
+							break;
 						}
-						break;
 					}
 				}
 			}
 		}
 	}
+	return board;
+}
+int(*push_up(int board[][20]))[20]{
+	int nums;
+	for (int j = 0; j < N; j++) {
+		nums = 0;
+		for (int i = 0; i < N; i++) {
+			if (board[i][j] != 0) {
+				if (i==N-1) {
+					int temp = board[i][j];
+					board[i][j] = 0;
+					board[nums][j] = temp;
+				}
+				else {
+					for (int k = i + 1; k < N; k++) {
+						if (board[k][j] != 0) {
+							if (board[i][j] == board[k][j]) {
+								board[i][j] = 0;
+								board[nums++][j] = board[k][j] * 2;
+								board[k][j] = 0;
+							}
+							else {
+								int temp = board[i][j];
+								board[i][j] = 0;
+								board[nums++][j] = temp;
+							}
+							i = k - 1;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	show(board);
+	return board;
+}
+int(*push_left(int board[][20]))[20]{
+	int nums;
+	for (int i = 0; i < N; i++) {
+		nums = 0;
+		for (int j = 0; j < N; j++) {
+			if (board[i][j] != 0) {
+				if (j == N - 1) {
+					int temp = board[i][j];
+					board[i][j] = 0;
+					board[i][nums] = temp;
+				}
+				else {
+					for (int k = j + 1; k < N; k++) {
+						if (board[i][k] != 0) {
+							if (board[i][j] == board[i][k]) {
+								board[i][j] = 0;
+								board[i][nums++] = board[i][k] * 2;
+								board[i][k] = 0;
+							}
+							else {
+								int temp = board[i][j];
+								board[i][j] = 0;
+								board[i][nums++] = temp;
+							}
+							j = k - 1;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	return board;
+}
+int (*push_down(int board[][20]))[20] {
+	int nums;
+	for (int j = 0; j < N;j++) {
+		nums = N - 1;
+		for (int i = N - 1; i > -1; i--) {
+			if (board[i][j] != 0) {
+				if (i == 0) {
+					int temp = board[i][j];
+					board[i][j] = 0;
+					board[nums][j] = temp;
+				}
+				else {
+					for (int k = i - 1; k > -1; k--) {
+						if (board[k][j] != 0) {
+							if (board[k][j] == board[i][j]) {
+								board[i][j] = 0;
+								board[nums--][j] = board[k][j] * 2;
+								board[k][j] = 0;
+							}
+							else {
+								int temp = board[i][j];
+								board[i][j] = 0;
+								board[nums--][j] = temp;
+							}
+							i = k + 1;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	return board;
+}
 
+int start(int depth,int board[][20]) {
+	int ans = 0;
+	if (depth == 5) {
+		int max = 0;
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
+				if (max < board[i][j]) max = board[i][j];
+		return max;
+	}
+	board=push_left(board);
+	ans=max(ans,start(depth + 1, board));
+	board=push_right(board);
+	ans=max(ans,start(depth + 1, board));
+	board=push_up(board);
+	ans=max(ans,start(depth + 1, board));
+	board=push_down(board);
+	ans=max(ans,start(depth + 1, board));
+	return ans;
 }
 void num12100() {
+	int board[20][20];
 	scanf("%d", &N);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			scanf("%d", &board[i][j]);
-
-	push_right();
-	show();
-
+	push_up(board);
+	//push_right();
+	//push_left();
+	//push_down();
+	show(board);
+	//int ans=start(0, board);
+	//printf("%d", ans);
 }
 
 
@@ -602,10 +604,10 @@ int main()
 	//num17144();
 	//num17779();
 	//못품
-	//num12100();
+	num12100();
 	//num14889();
 	//num14891();
-	num14503();
+	//num14503();
 
 }
 
