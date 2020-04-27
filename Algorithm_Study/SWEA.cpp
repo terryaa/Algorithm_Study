@@ -96,5 +96,6 @@ void n_queen() {
 }
 int main() {
 	//num1209();
+
 	n_queen();
 }

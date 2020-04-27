@@ -329,7 +329,6 @@ int(*push_up(int board[][20]))[20]{
 			}
 		}
 	}
-	show(board);
 	return board;
 }
 int(*push_left(int board[][20]))[20]{
@@ -359,6 +358,7 @@ int(*push_left(int board[][20]))[20]{
 							j = k - 1;
 							break;
 						}
+
 					}
 				}
 			}
@@ -410,13 +410,13 @@ int start(int depth,int board[][20]) {
 				if (max < board[i][j]) max = board[i][j];
 		return max;
 	}
-	board=push_left(board);
+	push_left(board);
 	ans=max(ans,start(depth + 1, board));
-	board=push_right(board);
+	push_right(board);
 	ans=max(ans,start(depth + 1, board));
-	board=push_up(board);
+	push_up(board);
 	ans=max(ans,start(depth + 1, board));
-	board=push_down(board);
+	push_down(board);
 	ans=max(ans,start(depth + 1, board));
 	return ans;
 }
@@ -426,10 +426,10 @@ void num12100() {
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			scanf("%d", &board[i][j]);
-	push_up(board);
-	//push_right();
-	//push_left();
-	//push_down();
+	//push_up(board);
+	//push_right(board);
+	push_left(board);
+	//push_down(board);
 	show(board);
 	//int ans=start(0, board);
 	//printf("%d", ans);
