@@ -5,13 +5,15 @@ using namespace std;
 
 
 
-void num1209() {
-	int arr[100][100];
+void sum() {
+
+	int board[100][100];
 	int sumcol[100];
+	int sumrow[100];
+	int sumcross[2];
 	int rep;
-	int max,sum;
-	int cross_r, cross_l;
-	int cross_r_pt, cross_l_pt;
+
+	int max, cross_r, cross_l;
 	freopen("C:\\input.txt", "r", stdin);
 
 
@@ -20,60 +22,74 @@ void num1209() {
 		scanf("%d", &rep);
 		for (int j = 0; j < 100; j++) {
 			for (int k = 0; k < 100; k++){
-				scanf("%d", &arr[j][k]);
+				scanf("%d", &board[j][k]);
 				}
 		}
 
 		max = 0;
-		cross_r = 0; cross_r_pt = 0;
-		cross_l = 0; cross_l_pt = 0;
+		cross_r = 0; 
+		cross_l = 99; 
 		fill(sumcol, sumcol + 100, 0);
+		fill(sumrow, sumrow + 100, 0);
+		fill(sumcross, sumcross + 2, 0);
 		for (int j = 0; j < 100; j++) {
-			sum = 0;
-			cross_r += arr[j][cross_r_pt++];
-			cross_l += arr[j][cross_l_pt--];
+			sumcross[0] += board[j][cross_r++];
+			sumcross[1] += board[j][cross_l--];
 			for (int k = 0; k < 100; k++) {
-				sum += arr[j][k];
-				sumcol[k] +=arr[j][k];
+				sumrow[k] +=board[j][k];
+				sumcol[k] += board[k][j];
 			}
-			if (max < sum) max = sum;
 		}
-		if (max < cross_r) max = cross_r;
-		if (max < cross_l) max = cross_l;
-		for (int p = 0; p < 100; p++) {
-			if (max < sumcol[p]) max = sumcol[p];
+		if (sumcross[0] > max) max = sumcross[0];
+		if (sumcross[1] > max) max = sumcross[1];
+		for(int k=0;k<100;k++){
+			if (sumrow[k] > max) max = sumrow[k];
+			if (sumcol[k] > max)max = sumcol[k];
 		}
-		//printf("\#%d", rep);
-		printf(" %d\n", max);
+		printf("\#%d %d", rep,max);
 	}
 
 }
 int N, pos=0;
 bool visit[11][11];
+void queen(int x, int y,int num) {
+	bool copy[11][11];
 
-
-void check(int x, int y,int count) {
-	if (count == N) {
+	if (num == N) {
 		pos++;
 		return;
 	}
-	int cros_r = 1, cros_l = N;
-	for (int j = 1; j <= N; j++) {
-		visit[x][j] = true;
-	}
 	for (int i = 1; i <= N; i++) {
-		visit[i][y] = true;
-		visit[i][cros_r++] = true;
-		visit[i][cros_l--] = true;
-	}
-	for(int i=x;i<=N;i++)
-		for (int j = y; j <= N; j++) {
-			if (visit[i][j] != 1) {
-				count++;
-				check(i, j, count);
-			}
+		for (int j = 1; j <= N; j++) {
+			copy[i][j] = visit[i][j];
 		}
+	}
+	visit[x][y] = true;
+	for (int i = 1; i <= N; i++) {
+		visit[x][i] = true;
+		visit[i][y] = true;
+	}
+	int crossl = y, crossr = y;
+	for (int i = x; i <= N; i++) {
+		if (crossl >= 1) { visit[i][crossl--] = true; }
+		if (crossr <= N) { visit[i][crossr++] = true; }
+	}
+	crossl = y; crossr = y;
+	for (int i = x; i > -1; i--) {
+		if (crossl >= 1) { visit[i][crossl--] = true; }
+		if (crossr <= N) { visit[i][crossr++] = true; }
+	}
+	for (int j = 1; j <= N; j++) {
+		if (visit[x+1][j] == false && num < N) {
+			queen(x+1, j, num + 1);
+		}
+	}
 
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			visit[i][j] = copy[i][j];
+		}
+	}
 
 }
 void n_queen() {
@@ -82,20 +98,45 @@ void n_queen() {
 	
 	for (int p = 0; p < rep; p++) {
 		scanf("%d", &N);
-		for (int i = 1; i <= N; i++)
-			for (int j = 1; j <= N; j++) {
-				check(i, j, 1);
-
-			}
-		for (int q = 1; q <= N; q++)
-			fill(visit[q], visit[q] + 11, false);
-		printf("%d", pos);
 		pos = 0;
+		for (int i = 1; i <= N; i++) {
+			queen(1, i, 1);
+		}
+		for (int i = 1; i <= N; i++) {
+			fill(visit[i], visit[i] + N, false);
+		}
+		printf("\#%d %d\n", rep,pos);
 	}
 
 }
 
+int dots[10];
+int dots_in[20];
+void num1245() {
+	int t;
+	scanf("%d", &t);
+	for (int i = 0; i < t; i++) {
+		int nums;
+		scanf("%d", &nums);
+		for (int j = 0; j < nums; j++) {
+			int num;
+			scanf("%d", &num);
+			dots_in[j] = num;
+		}
+		for (int j = nums; j < nums * 2; j++) {
+			int num;
+			scanf("%d", &num);
+			dots_in[j] = num;
+		}
+		for (int j = 0; j < nums; j++) {
+			int num = dots_in[j];
+			dots[num - 1] = dots_in[j+nums];
+		}
+		
+	}
+}
 int main() {
-	//num1209();
-	n_queen();
+	//sum();
+	num1245();
+	//n_queen();
 }
